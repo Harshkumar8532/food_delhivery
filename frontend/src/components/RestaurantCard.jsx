@@ -18,7 +18,17 @@ export default function RestaurantCard({ restaurant }) {
           />
           {restaurant.offers && (
             <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-3 pt-10">
-              <span className="text-white font-extrabold text-lg tracking-tight uppercase">{restaurant.offers}</span>
+              <span className="text-white font-extrabold text-lg tracking-tight">{restaurant.offers}</span>
+            </div>
+          )}
+          {/* Tags */}
+          {restaurant.tags && restaurant.tags.length > 0 && (
+            <div className="absolute top-3 left-3 flex gap-2">
+              {restaurant.tags.map(tag => (
+                <span key={tag} className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-lg">
+                  {tag}
+                </span>
+              ))}
             </div>
           )}
         </div>
@@ -38,7 +48,7 @@ export default function RestaurantCard({ restaurant }) {
           
           <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400 mt-2 pt-2 border-t border-gray-100 dark:border-dark-border">
             <div className="flex items-center gap-1 font-medium">
-              <Clock size={14} className="text-primary" />
+              <Clock size={14} className="text-orange-500" />
               <span>{restaurant.deliveryTime}</span>
             </div>
             <span className="font-medium">₹{restaurant.priceForTwo} for two</span>

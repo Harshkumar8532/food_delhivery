@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { GlobalContext } from '../context/GlobalContext';
 
 export default function FoodCard({ item }) {
-  const { cart, addToCart, removeFromCart, updateQuantity } = useContext(GlobalContext);
+  const { cart, addToCart, updateQuantity } = useContext(GlobalContext);
 
   const cartItem = cart.find(i => i._id === item._id);
 
@@ -16,12 +16,15 @@ export default function FoodCard({ item }) {
             <span className="w-4 h-4 border-2 border-red-600 rounded flex items-center justify-center"><span className="w-2 h-2 bg-red-600 rounded-full"></span></span>
           )}
           {item.tags?.includes('Bestseller') && (
-            <span className="text-secondary text-xs font-bold bg-secondary/10 px-1.5 py-0.5 rounded">Bestseller</span>
+            <span className="text-orange-500 text-xs font-bold bg-orange-500/10 px-1.5 py-0.5 rounded">⭐ Bestseller</span>
           )}
         </div>
         
         <h3 className="font-bold text-lg text-gray-900 dark:text-white">{item.name}</h3>
-        <p className="font-semibold text-gray-800 dark:text-gray-200 mt-1">${item.price}</p>
+        <p className="font-semibold text-gray-800 dark:text-gray-200 mt-1">₹{item.price}</p>
+        {item.rating && (
+          <p className="text-xs text-green-600 font-medium mt-1">★ {item.rating} rating</p>
+        )}
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 line-clamp-2 md:line-clamp-none">{item.description}</p>
       </div>
 
@@ -30,7 +33,7 @@ export default function FoodCard({ item }) {
           {item.image ? (
              <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
           ) : (
-             <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+             <div className="w-full h-full flex items-center justify-center text-gray-400 text-3xl">🍽️</div>
           )}
         </div>
         
@@ -38,15 +41,15 @@ export default function FoodCard({ item }) {
           {!cartItem ? (
             <button 
               onClick={() => addToCart(item)}
-              className="bg-white dark:bg-dark-surface text-primary border border-gray-200 dark:border-dark-border font-bold shadow-md rounded-lg px-8 py-2 text-sm uppercase transition-colors hover:bg-gray-50 dark:hover:bg-dark-background"
+              className="bg-white dark:bg-dark-surface text-orange-500 border border-gray-200 dark:border-dark-border font-bold shadow-md rounded-lg px-8 py-2 text-sm uppercase transition-all hover:bg-orange-50 dark:hover:bg-dark-background hover:shadow-lg"
             >
               ADD
             </button>
           ) : (
             <div className="bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border shadow-md rounded-lg flex items-center overflow-hidden">
               <button onClick={() => updateQuantity(item._id, -1)} className="px-3 py-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-dark-background font-bold text-lg">-</button>
-              <span className="px-2 text-primary font-bold text-sm tracking-widest">{cartItem.quantity}</span>
-              <button onClick={() => updateQuantity(item._id, 1)} className="px-3 py-2 text-primary hover:bg-gray-100 dark:hover:bg-dark-background font-bold text-lg">+</button>
+              <span className="px-2 text-orange-500 font-bold text-sm tracking-widest">{cartItem.quantity}</span>
+              <button onClick={() => updateQuantity(item._id, 1)} className="px-3 py-2 text-orange-500 hover:bg-gray-100 dark:hover:bg-dark-background font-bold text-lg">+</button>
             </div>
           )}
         </div>

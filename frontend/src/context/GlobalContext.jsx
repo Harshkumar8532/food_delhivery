@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { APP_DATA } from '../data/appData';
 
 export const GlobalContext = createContext();
 
@@ -6,15 +7,21 @@ export const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [selectedCity, setSelectedCity] = useState(APP_DATA.city);
+  const [orders, setOrders] = useState([]);
 
   // Load state on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    const savedCart = localStorage.getItem('cart');
-    const savedTheme = localStorage.getItem('theme');
+    const savedUser = localStorage.getItem('petpooja_user');
+    const savedCart = localStorage.getItem('petpooja_cart');
+    const savedTheme = localStorage.getItem('petpooja_theme');
+    const savedCity = localStorage.getItem('petpooja_city');
+    const savedOrders = localStorage.getItem('petpooja_orders');
     
     if (savedUser) setUser(JSON.parse(savedUser));
     if (savedCart) setCart(JSON.parse(savedCart));
+    if (savedCity) setSelectedCity(savedCity);
+    if (savedOrders) setOrders(JSON.parse(savedOrders));
     
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       setDarkMode(true);
@@ -27,24 +34,32 @@ export const GlobalProvider = ({ children }) => {
     setDarkMode(!darkMode);
     if (!darkMode) {
       document.body.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      localStorage.setItem('petpooja_theme', 'dark');
     } else {
       document.body.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      localStorage.setItem('petpooja_theme', 'light');
     }
   };
 
   // State Sync
   useEffect(() => {
-    if (user) localStorage.setItem('user', JSON.stringify(user));
-    else localStorage.removeItem('user');
+    if (user) localStorage.setItem('petpooja_user', JSON.stringify(user));
+    else localStorage.removeItem('petpooja_user');
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('petpooja_cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Cart Add/Remove logic that aggregates identical items
+  useEffect(() => {
+    localStorage.setItem('petpooja_city', selectedCity);
+  }, [selectedCity]);
+
+  useEffect(() => {
+    localStorage.setItem('petpooja_orders', JSON.stringify(orders));
+  }, [orders]);
+
+  // Cart Add/Remove logic
   const addToCart = (item) => {
     setCart((prevCart) => {
       const existing = prevCart.find(i => i._id === item._id);
@@ -70,13 +85,32 @@ export const GlobalProvider = ({ children }) => {
   };
 
   const clearCart = () => setCart([]);
-  const logout = () => setUser(null);
+
+  const placeOrder = (orderData) => {
+    const newOrder = {
+      _id: 'ORD' + Date.now(),
+      ...orderData,
+      status: 'Confirmed',
+      createdAt: new Date().toISOString(),
+      timeline: ['Order Placed', 'Restaurant Preparing']
+    };
+    setOrders(prev => [newOrder, ...prev]);
+    clearCart();
+    return newOrder;
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('petpooja_user');
+  };
 
   return (
     <GlobalContext.Provider value={{ 
       user, setUser, logout, 
       cart, addToCart, removeFromCart, updateQuantity, clearCart,
-      darkMode, toggleDarkMode 
+      darkMode, toggleDarkMode,
+      selectedCity, setSelectedCity,
+      orders, placeOrder
     }}>
       {children}
     </GlobalContext.Provider>

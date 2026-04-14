@@ -14,6 +14,7 @@ import Success from './pages/Success';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Contact from './pages/Contact';
 import './index.css';
 
 const ScrollToTop = () => {
@@ -42,6 +43,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/contact" element={<Contact />} />
             </Routes>
           </div>
           <Footer />
